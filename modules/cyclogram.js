@@ -22,7 +22,6 @@ function drawCyclogram(p5Instance, drawOptions) {
     colNumber += 1;
     if (i % framesPerDay == 0) {
         rowNumber += 1; // new row
-        console.log('rowNumber', rowNumber);
         colNumber = 0;
     }
     if (i == steps) i = 0;

@@ -1,12 +1,7 @@
 import { createCyclogramCanvas, drawCyclogram } from "./modules/cyclogram.js";
 import { processUploadedVideo } from "./modules/video.js";
 
-let video;
-let frameRate;
-let steps;
-let density;
-let myX = 100; // where you've clicked
-let myY = 400;
+let processedVideoResponse = {};
 let framesPerDay = 288/2; // remove nighttime hours, crudely
 let dotSize = 6;
 let i = 0;
@@ -24,13 +19,7 @@ new p5(function(p5) {
 
         document.getElementById('input').addEventListener('change', async function(event) {
             try {
-                const response = await processUploadedVideo(p5, event);
-                video = response.video;
-                frameRate = response.frameRate;
-                steps = response.steps;
-                density = response.density;
-                myX = response.myX;
-                myY = response.myY;
+                processedVideoResponse = await processUploadedVideo(p5, event);
             } catch (error) {
                 alert('Error loading file!');
             }
@@ -38,24 +27,25 @@ new p5(function(p5) {
     }
 
     p5.draw = function() {
+        const { video, frameRate, steps, density, x, y } = processedVideoResponse;
         if (video) {
             const drawOptions = {
                 video,
                 frameRate,
                 steps,
                 density,
-                myX,
-                myY,
+                myX: x || 100,
+                myY: y || 400,
                 framesPerDay,
                 dotSize,
                 i,
                 rowNumber,
                 colNumber,
             };
-            const response = drawCyclogram(p5, drawOptions);
-            i = response.i;
-            rowNumber = response.rowNumber;
-            colNumber = response.colNumber;
+            const cyclogramResults = drawCyclogram(p5, drawOptions);
+            i = cyclogramResults.i;
+            rowNumber = cyclogramResults.rowNumber;
+            colNumber = cyclogramResults.colNumber;
         }
     }
 });
